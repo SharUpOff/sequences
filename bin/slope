@@ -1,0 +1,22 @@
+#!/usr/bin/awk -f
+# Slope of a Linear Trend Line
+# Author: SharUpOff<sharupoff@efstudios.org>
+# License: GPLv3
+#
+# Example:
+# seq 0 31 | awk '{ print 50 * (1 + sin($1 / 5)) }' | slope
+# -2.87654
+# # y = slope * x + intercept
+# seq 0 31 | awk -v slope=-2.87654 -v intercept=100 '{ print slope * $1 + intercept }' | dynamic
+# ███▇▇▇▇▆▆▆▆▅▅▅▅▄▄▄▄▃▃▃▃▂▂▂▂▁▁▁   10.83%
+#
+{
+    sum_x += NR
+    sum_y += $1
+    sum_xy += NR * $1
+    sum_xx += NR * NR
+} END {
+    x_avg = sum_x / NR
+    y_avg = sum_y / NR
+    print (sum_xy - NR * x_avg * y_avg) / (sum_xx - NR * x_avg * x_avg)
+}

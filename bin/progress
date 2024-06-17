@@ -1,0 +1,62 @@
+#!/usr/bin/awk -f
+# Dynamic visualization for a data sequence
+# Author: SharUpOff<sharupoff@efstudios.org>
+# License: GPLv3
+#
+# Example:
+# seq 16 | awk '{ print 50 * (1 + sin($1 / 4)) }' | progress
+# ███████████████▌           62.37%
+# ██████████████████▍        73.97%
+# █████████████████████      84.08%
+# ███████████████████████    92.07%
+# ████████████████████████▎  97.45%
+# ████████████████████████▉  99.87%
+# ████████████████████████▊  99.20%
+# ███████████████████████▊   95.46%
+# ██████████████████████▏    88.90%
+# ███████████████████▉       79.92%
+# █████████████████▎         69.08%
+# ██████████████▎            57.06%
+# ███████████▏               44.59%
+# ████████                   32.46%
+# █████▎                     21.42%
+# ███                        12.16%
+#
+BEGIN {
+    PartialBlocks[0] = ""
+    PartialBlocks[1] = "▏"
+    PartialBlocks[2] = "▎"
+    PartialBlocks[3] = "▍"
+    PartialBlocks[4] = "▌"
+    PartialBlocks[5] = "▋"
+    PartialBlocks[6] = "▊"
+    PartialBlocks[7] = "▉"
+    FullBlock = "█"
+
+    Denominator = length(PartialBlocks)
+
+    PROGRESS_DISCRETENESS = ENVIRON["PROGRESS_DISCRETENESS"]
+    Discreteness = PROGRESS_DISCRETENESS ? PROGRESS_DISCRETENESS: 0.5
+
+    PROGRESS_MAX_VALUE = ENVIRON["PROGRESS_MAX_VALUE"]
+    MaxValue = PROGRESS_MAX_VALUE ? PROGRESS_MAX_VALUE : 100
+
+    FullBlockValue = Denominator * Discreteness
+    FullBlocksInMaxValue = MaxValue / FullBlockValue
+}
+
+function fill_with_spaces(spaces) {
+    return sprintf(sprintf("%%%ds", spaces), "")
+}
+
+{
+    value = $1
+
+    full = fill_with_spaces(value / FullBlockValue)
+    partial = PartialBlocks[int(value / Discreteness % Denominator)]
+    empty = fill_with_spaces(FullBlocksInMaxValue - int(value / Discreteness) / Denominator)
+
+    gsub(" ", FullBlock, full)
+
+    printf("%s %6.2f%%\n", full partial empty, value)
+}

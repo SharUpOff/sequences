@@ -1,0 +1,37 @@
+#!/usr/bin/awk -f
+# Dynamic visualization for a data sequence
+# Author: SharUpOff<sharupoff@efstudios.org>
+# License: GPLv3
+#
+# Example:
+# seq 0 31 | awk '{ print 50 * (1 + sin($1 / 5)) }' | dynamic
+# ▄▅▆▇▇███████▇▆▆▅▄▃▂▁▁      ▁▁▂▃▄  45.85%
+#
+BEGIN {
+    PartialBlocks[0] = " "
+    PartialBlocks[1] = "▁"
+    PartialBlocks[2] = "▂"
+    PartialBlocks[3] = "▃"
+    PartialBlocks[4] = "▄"
+    PartialBlocks[5] = "▅"
+    PartialBlocks[6] = "▆"
+    PartialBlocks[7] = "▇"
+    PartialBlocks[8] = "█"
+
+    Denominator = length(PartialBlocks)
+
+    DYNAMIC_MAX_VALUE = ENVIRON["DYNAMIC_MAX_VALUE"]
+    MaxValue = DYNAMIC_MAX_VALUE ? DYNAMIC_MAX_VALUE : 100
+
+    Discreteness = MaxValue / Denominator
+}
+
+{
+    value = $1
+
+    printf("%s", PartialBlocks[int(value / Discreteness)])
+}
+
+END {
+    printf(" %6.2f%\n", value)
+}

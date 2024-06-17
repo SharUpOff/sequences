@@ -1,0 +1,28 @@
+#!/usr/bin/awk -f
+# Simple Moving Average
+# Author: SharUpOff<sharupoff@efstudios.org>
+# License: GPLv3
+#
+# Example:
+# seq 0 31 | awk '{ print 50 * (1 + sin($1 / 5)) }' | sma | dynamic
+# ▅▇██▆▄▁  ▁▃  40.94%
+#
+BEGIN {
+    SMA_PERIODS = ENVIRON["SMA_PERIODS"]
+    Periods = SMA_PERIODS ? SMA_PERIODS: 3
+}
+
+{
+    sum += $1
+
+    if (NR % Periods == 0) {
+        print sum / Periods
+        sum = 0
+    }
+}
+
+END {
+    if (sum) {
+        print sum / (NR % Periods)
+    }
+}
