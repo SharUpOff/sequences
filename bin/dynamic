@@ -5,7 +5,7 @@
 #
 # Example:
 # seq 0 31 | awk '{ print 50 * (1 + sin($1 / 5)) }' | dynamic
-# ▄▅▆▇▇███████▇▆▆▅▄▃▂▁▁      ▁▁▂▃▄  45.85%
+# ▄▄▅▆▆▇▇▇▇▇▇▇▆▆▅▄▃▂▂▁        ▁▂▂▃  45.85%
 #
 BEGIN {
     PartialBlocks[0] = " "
@@ -18,7 +18,7 @@ BEGIN {
     PartialBlocks[7] = "▇"
     PartialBlocks[8] = "█"
 
-    Denominator = length(PartialBlocks)
+    Denominator = length(PartialBlocks) - 1
 
     DYNAMIC_MAX_VALUE = ENVIRON["DYNAMIC_MAX_VALUE"]
     MaxValue = DYNAMIC_MAX_VALUE ? DYNAMIC_MAX_VALUE : 100
